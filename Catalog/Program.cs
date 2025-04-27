@@ -1,8 +1,11 @@
+using Catalog.Data;
 using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.AddNpgsqlDbContext<ProductDbContext>(connectionName: "catalogdb");
 
 builder.Services.AddControllers();
 
