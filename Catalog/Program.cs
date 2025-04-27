@@ -1,4 +1,3 @@
-using Catalog.Data;
 using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
