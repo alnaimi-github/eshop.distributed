@@ -1,3 +1,5 @@
+using ServiceDefaults.Messaging;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -5,6 +7,8 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<ProductDbContext>(connectionName: "catalogdb");
 
 builder.Services.AddScoped<ProductService>();
+
+builder.Services.AddMassTransitWithAssemblies(Assembly.GetExecutingAssembly());
 
 builder.Services.AddControllers();
 
