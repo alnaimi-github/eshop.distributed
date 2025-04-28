@@ -5,6 +5,11 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpClient<CatalogApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https+http://catalog");
+});
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
