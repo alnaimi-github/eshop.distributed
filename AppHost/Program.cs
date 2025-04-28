@@ -43,4 +43,6 @@ var basket = builder
     .WaitFor(rabbitmq)
     .WaitFor(keycloak);
 
+builder.AddProject<Projects.WebApp>("webapp");
+
 builder.Build().Run();
