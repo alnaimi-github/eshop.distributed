@@ -10,6 +10,8 @@ builder.Services.AddHttpClient<CatalogApiClient>(client =>
     client.BaseAddress = new Uri("https+http://catalog");
 });
 
+builder.AddRedisOutputCache("cache");
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
