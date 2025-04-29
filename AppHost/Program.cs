@@ -3,7 +3,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 // Backing Services
 var postgres = builder
     .AddPostgres("postgres")
-    .WithDataVolume()
+    //.WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
 
 var catalogDb = postgres.AddDatabase("catalogdb");
@@ -11,27 +11,46 @@ var catalogDb = postgres.AddDatabase("catalogdb");
 var cache = builder
     .AddRedis("cache")
     .WithRedisInsight()
-    .WithDataVolume()
+    //.WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
 
 var rabbitmq = builder
     .AddRabbitMQ("rabbitmq")
     .WithManagementPlugin()
-    .WithDataVolume()
+    //.WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
 
 var keycloak = builder
     .AddKeycloak("keycloak", 8080)
-    .WithDataVolume()
+    //.WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
+
+if (builder.ExecutionContext.IsRunMode)
+{
+    // Data volumes don't work on ACA for Postgres so only add when running
+    postgres.WithDataVolume();
+    rabbitmq.WithDataVolume();
+    keycloak.WithDataVolume();
+}
+
+var ollama = builder
+    .AddOllama("ollama", 11434)
+    .WithDataVolume()
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithOpenWebUI();
+
+var llama = ollama.AddModel("llama3.2");
+
 
 // Projects
 var catalog = builder
     .AddProject<Projects.Catalog>("catalog")
     .WithReference(catalogDb)
     .WithReference(rabbitmq)
+    .WithReference(llama)
     .WaitFor(catalogDb)
-    .WaitFor(rabbitmq);
+    .WaitFor(rabbitmq)
+    .WaitFor(llama);
 
 var basket = builder
     .AddProject<Projects.Basket>("basket")
